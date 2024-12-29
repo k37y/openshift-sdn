@@ -614,7 +614,11 @@ func (np *networkPolicyPlugin) selectNamespacesInternal(selector labels.Selector
 func (np *networkPolicyPlugin) updateMatchCache(npns *npNamespace) {
 	for _, match := range np.nsMatchCache {
 		if npns.gotNamespace && npns.gotNetNamespace && match.selector.Matches(labels.Set(npns.labels)) {
-			match.matches[npns.name] = npns.vnid
+			if npns.name == HostNetworkNamespace {
+				match.matches[npns.name] = 0
+			} else {
+				match.matches[npns.name] = npns.vnid
+			}
 		} else {
 			delete(match.matches, npns.name)
 		}
